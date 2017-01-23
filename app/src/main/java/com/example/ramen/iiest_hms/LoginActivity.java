@@ -3,44 +3,25 @@ package com.example.ramen.iiest_hms;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.pm.PackageManager;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.example.ramen.iiest_hms.helper.PageParser;
 import com.example.ramen.iiest_hms.helper.VolleyUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
@@ -103,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuth != false) {
+        if (mAuth) {
             return;
         }
 
@@ -147,31 +128,41 @@ public class LoginActivity extends AppCompatActivity {
     private void Login() {
 
         String url = "http://iiesthostel.iiests.ac.in/students/login_students";
+        String content_type = "application/x-www-form-urlencoded; charset=utf-8";
         String sid = mSIDView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        String body = "sid=" + sid + "&password=" + password + "&type=2&login=";
-        Map<String, String> headers = new HashMap<String, String>();
-        headers.put("content-type", "application/x-www-form-urlencoded");
+//        String body = "sid=" + sid + "&password=" + password + "&type=2&login=";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("login", "");
+        params.put("sid", sid);
+        params.put("password", password);
+        params.put("type", "2");
 
-        VolleyUtils.sendVolleyPostBodyRequest(LoginActivity.this, url, headers, body, new VolleyUtils.VolleyRequestListener() {
+        VolleyUtils.sendVolleyPostRequest(LoginActivity.this, url, params, content_type, new VolleyUtils.VolleyRequestListener() {
             @Override
             public void onResponse(String response) {
-                PageParser p = new PageParser(LoginActivity.this,response);
-                if (p.checkLogin() == true){
-                    Toast.makeText(LoginActivity.this,"Login Success!!",Toast.LENGTH_SHORT).show();
+                PageParser p = new PageParser(LoginActivity.this, response);
+                if (p.checkLogin()) {
+                    Toast.makeText(LoginActivity.this, "Login Success!!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Login Failure!!", Toast.LENGTH_SHORT).show();
                 }
-                else
-                    Toast.makeText(LoginActivity.this,"Login Failure!!",Toast.LENGTH_SHORT).show();
+                int maxLogSize = 1000;
+                for (int i = 0; i <= response.length() / maxLogSize; i++) {
+                    int start = i * maxLogSize;
+                    int end = (i + 1) * maxLogSize;
+                    end = end > response.length() ? response.length() : end;
+                    Log.v("logged in: ", response.substring(start, end));
+                }
             }
 
             @Override
             public void onError(String error) {
-                Toast.makeText(LoginActivity.this,"Connect Error !!",Toast.LENGTH_SHORT).show();
-
+                Log.d("LoginActivity", error);
+                Toast.makeText(LoginActivity.this, "Connect Error !!", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
 

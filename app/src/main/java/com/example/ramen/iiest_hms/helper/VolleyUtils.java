@@ -71,7 +71,7 @@ public class VolleyUtils {
         if (method == Request.Method.GET) {
             sendVolleyGetRequest(context, url, params, timeout, numRetries, listener);
         } else if (method == Request.Method.POST) {
-            sendVolleyPostRequest(context, url, params, timeout, numRetries, listener);
+            //sendVolleyPostRequest(context, url, params, timeout, numRetries, listener);
         } else {
             Log.e("GOPI", "Unsupported HTTP request type");
         }
@@ -141,7 +141,7 @@ public class VolleyUtils {
     }
 
     public static void sendVolleyPostRequest(final Context context, String url, final Map<String,
-            String> params, int timeout, int numRetries, final VolleyRequestListener listener) {
+            String> params, final String content_type, final VolleyRequestListener listener) {
 
         StringRequest volleyRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -172,20 +172,24 @@ public class VolleyUtils {
                     }
                 }) {
             @Override
-            protected Map<String, String> getParams() {
+            public String getBodyContentType() {
+                return content_type;
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
                 return params;
             }
         };
 
         Log.d("MyVolley", "sending volley req to " + url);
         volleyRequest.setRetryPolicy(new DefaultRetryPolicy(
-                timeout,
-                numRetries,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 2,
+                1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MyVolley.getInstance(context).addToRequestQueue(volleyRequest);
     }
 
-    public static void sendVolleyPostBodyRequest(final Context context, String url, final Map<String,String> headers, final String httpPostBody, final VolleyRequestListener listener) {
+    public static void sendVolleyPostBodyRequest(final Context context, String url, final Map<String, String> headers, final String httpPostBody, final VolleyRequestListener listener) {
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -217,6 +221,11 @@ public class VolleyUtils {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 return httpPostBody.getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
             }
 
             @Override

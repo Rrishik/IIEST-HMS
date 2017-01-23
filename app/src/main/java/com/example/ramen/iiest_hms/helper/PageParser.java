@@ -5,8 +5,6 @@ import android.content.Context;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 public class PageParser {
 
@@ -19,14 +17,8 @@ public class PageParser {
         mDocument = Jsoup.parse(responsePage);
     }
 
-    public boolean checkLogin(){
-        Elements chk = mDocument.getElementsByClass("top-nav notification-row");
-        if (chk == null){
-            mLoggedIn = false;
-        }
-        else {
-            mLoggedIn = true;
-        }
-        return mLoggedIn;
+    public boolean checkLogin() {
+        boolean chk = mDocument.hasClass("top-nav notification-row");
+        return chk;
     }
 }
