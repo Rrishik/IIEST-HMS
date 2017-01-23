@@ -3,6 +3,8 @@ package com.example.ramen.iiest_hms;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,28 +19,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ramen.iiest_hms.helper.NetworkUtils;
 import com.example.ramen.iiest_hms.helper.PageParser;
-import com.example.ramen.iiest_hms.helper.VolleyUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity {
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private boolean mAuth = false;
+    private UserLoginTask mAuthTask = null;
+
+    private String url = "http://iiesthostel.iiests.ac.in/students/login_students";
 
     // UI references.
     private TextView mSIDView;
@@ -84,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuth) {
+        if (mAuthTask != null) {
             return;
         }
 
@@ -121,50 +109,10 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            Login();
+            mAuthTask = new UserLoginTask(sid, password);
+            mAuthTask.execute(url);
         }
     }
-
-    private void Login() {
-
-        String url = "http://iiesthostel.iiests.ac.in/students/login_students";
-        String content_type = "application/x-www-form-urlencoded; charset=utf-8";
-        String sid = mSIDView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
-//        String body = "sid=" + sid + "&password=" + password + "&type=2&login=";
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("login", "");
-        params.put("sid", sid);
-        params.put("password", password);
-        params.put("type", "2");
-
-        VolleyUtils.sendVolleyPostRequest(LoginActivity.this, url, params, content_type, new VolleyUtils.VolleyRequestListener() {
-            @Override
-            public void onResponse(String response) {
-                PageParser p = new PageParser(LoginActivity.this, response);
-                if (p.checkLogin()) {
-                    Toast.makeText(LoginActivity.this, "Login Success!!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(LoginActivity.this, "Login Failure!!", Toast.LENGTH_SHORT).show();
-                }
-                int maxLogSize = 1000;
-                for (int i = 0; i <= response.length() / maxLogSize; i++) {
-                    int start = i * maxLogSize;
-                    int end = (i + 1) * maxLogSize;
-                    end = end > response.length() ? response.length() : end;
-                    Log.v("logged in: ", response.substring(start, end));
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                Log.d("LoginActivity", error);
-                Toast.makeText(LoginActivity.this, "Connect Error !!", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 
     /**
      * Shows the progress UI and hides the login form.
@@ -202,5 +150,69 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-}
 
+    public class UserLoginTask extends AsyncTask<String, String, String> {
+
+        private final String mSid;
+        private final String mPassword;
+        private String response;
+
+        UserLoginTask(String sid, String password) {
+            mSid = sid;
+            mPassword = password;
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+
+            String urlString = urls[0];
+            Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("sid", mSid)
+                    .appendQueryParameter("password", mPassword)
+                    .appendQueryParameter("type", "2")
+                    .appendQueryParameter("login", "");
+            String paramsQuery = builder.build().getEncodedQuery();
+
+            try {
+                response = NetworkUtils.httpPostRequest(urlString, paramsQuery);
+                return response;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return e.getMessage();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(final String success) {
+            mAuthTask = null;
+            showProgress(false);
+
+            if (success != null) {
+                PageParser p = new PageParser(LoginActivity.this, response);
+                if (p.checkLogin()) {
+                    Toast.makeText(LoginActivity.this, "Login Success!!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Login Failure!!", Toast.LENGTH_SHORT).show();
+                }
+                int maxLogSize = 1000;
+                for (int i = 0; i <= response.length() / maxLogSize; i++) {
+                    int start = i * maxLogSize;
+                    int end = (i + 1) * maxLogSize;
+                    end = end > response.length() ? response.length() : end;
+                    Log.v("logged in: ", response.substring(start, end));
+                }
+            } else {
+                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.requestFocus();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            showProgress(false);
+        }
+
+
+    }
+}

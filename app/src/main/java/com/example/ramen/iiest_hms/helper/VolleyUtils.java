@@ -140,8 +140,7 @@ public class VolleyUtils {
         MyVolley.getInstance(context).addToRequestQueue(volleyRequest);
     }
 
-    public static void sendVolleyPostRequest(final Context context, String url, final Map<String,
-            String> params, final String content_type, final VolleyRequestListener listener) {
+    public static void sendVolleyPostRequest(final Context context, String url, final String body, final Map<String, String> params, final String content_type, final VolleyRequestListener listener) {
 
         StringRequest volleyRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -171,9 +170,20 @@ public class VolleyUtils {
                         }
                     }
                 }) {
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return body.getBytes();
+            }
+
             @Override
             public String getBodyContentType() {
-                return content_type;
+                return content_type.trim();
+            }
+
+            @Override
+            protected String getParamsEncoding() {
+                return "UTF-8";
             }
 
             @Override
@@ -189,7 +199,7 @@ public class VolleyUtils {
         MyVolley.getInstance(context).addToRequestQueue(volleyRequest);
     }
 
-    public static void sendVolleyPostBodyRequest(final Context context, String url, final Map<String, String> headers, final String httpPostBody, final VolleyRequestListener listener) {
+    public static void sendVolleyPostBodyRequest(final Context context, String url, final Map<String, String> headers, final Map<String, String> params, final String httpPostBody, final VolleyRequestListener listener) {
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -221,6 +231,11 @@ public class VolleyUtils {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 return httpPostBody.getBytes();
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return params;
             }
 
             @Override
