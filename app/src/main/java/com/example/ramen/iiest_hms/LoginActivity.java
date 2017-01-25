@@ -172,9 +172,10 @@ public class LoginActivity extends AppCompatActivity {
                     .appendQueryParameter("type", "2")
                     .appendQueryParameter("login", "");
             String paramsQuery = builder.build().getEncodedQuery();
+            Log.d("params", paramsQuery);
 
             try {
-                response = NetworkUtils.httpPostRequest(urlString, paramsQuery);
+                response = NetworkUtils.okHttpPostRequest(urlString,paramsQuery);
                 return response;
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -188,18 +189,11 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success != null) {
-                PageParser p = new PageParser(LoginActivity.this, response);
+                PageParser p = new PageParser(LoginActivity.this, success);
                 if (p.checkLogin()) {
                     Toast.makeText(LoginActivity.this, "Login Success!!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(LoginActivity.this, "Login Failure!!", Toast.LENGTH_SHORT).show();
-                }
-                int maxLogSize = 1000;
-                for (int i = 0; i <= response.length() / maxLogSize; i++) {
-                    int start = i * maxLogSize;
-                    int end = (i + 1) * maxLogSize;
-                    end = end > response.length() ? response.length() : end;
-                    Log.v("logged in: ", response.substring(start, end));
                 }
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
