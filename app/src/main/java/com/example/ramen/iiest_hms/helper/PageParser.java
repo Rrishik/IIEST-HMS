@@ -2,15 +2,17 @@ package com.example.ramen.iiest_hms.helper;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class PageParser {
 
     private Context mContext;
     private Document mDocument;
-    private boolean mLoggedIn = false;
 
     public PageParser(Context context, String responsePage) {
         mContext = context;
@@ -18,7 +20,13 @@ public class PageParser {
     }
 
     public boolean checkLogin() {
-        boolean chk = mDocument.hasClass("top-nav notification-row");
-        return chk;
+
+        Elements username = mDocument.getElementsByClass("username");
+        Log.d("parser  ", "checkLogin: "+ username.toString());
+
+        if (username.toString().length() != 0) {;
+            return (true);
+        }
+        return false;
     }
 }

@@ -9,9 +9,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import okhttp3.JavaNetCookieJar;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -70,27 +73,24 @@ public class NetworkUtils {
     }
 
     public static String okHttpPostRequest(String url, String params){
-        OkHttpClient client = new OkHttpClient();
 
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.create(mediaType, "sid=510814041&password=rvprerna&type=2&login=");
+        CookieManager cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .cookieJar(new JavaNetCookieJar(cookieManager))
+                .build();
+
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+        RequestBody body = RequestBody.create(mediaType, params);
         Request request = new Request.Builder()
-                .url("http://iiesthostel.iiests.ac.in/students/login_students")
+                .url(url)
                 .post(body)
                 .addHeader("content-type", "application/x-www-form-urlencoded")
                 .addHeader("cache-control", "no-cache")
-                .addHeader("postman-token", "bbd9c3f0-eae3-5fa7-eb63-f712c41861f9")
                 .build();
 
         try {
             String response = client.newCall(request).execute().body().string();
-            int maxLogSize = 1000;
-            for (int i = 0; i <= response.length() / maxLogSize; i++) {
-                int start = i * maxLogSize;
-                int end = (i + 1) * maxLogSize;
-                end = end > response.length() ? response.length() : end;
-                Log.v("logged in: ", response.substring(start, end));
-            }
             return response;
         }catch (IOException e){
             e.printStackTrace();
