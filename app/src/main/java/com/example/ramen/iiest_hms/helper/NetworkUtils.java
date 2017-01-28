@@ -72,7 +72,7 @@ public class NetworkUtils {
         return result.toString();
     }
 
-    public static String okHttpPostRequest(String url, String params){
+    public static String okHttpPostRequest(String url, String params) {
 
         CookieManager cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
@@ -92,7 +92,7 @@ public class NetworkUtils {
         try {
             String response = client.newCall(request).execute().body().string();
             return response;
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;

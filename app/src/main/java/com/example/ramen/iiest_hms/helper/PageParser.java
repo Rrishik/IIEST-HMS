@@ -12,7 +12,7 @@ import org.jsoup.select.Elements;
 public class PageParser {
 
     private Context mContext;
-    private Document mDocument;
+    private static Document mDocument;
 
     public PageParser(Context context, String responsePage) {
         mContext = context;
@@ -28,5 +28,17 @@ public class PageParser {
             return (true);
         }
         return false;
+    }
+
+    public static boolean checkDues(){
+
+        Elements spaceunder = mDocument.getElementsByClass("spaceUnder");
+        Element dues_tr = spaceunder.get(1);
+        Elements dues_td = dues_tr.getElementsByTag("td");
+        Log.d("CheckDues", dues_td.toString());
+        if (dues_td.text().length() != 0){
+            return false;
+        }
+        return true;
     }
 }

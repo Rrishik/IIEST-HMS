@@ -1,0 +1,17 @@
+<tabs>
+    <tab
+        icon="@drawable/ic_dvr"
+        id="@+id/tab_dashboard"
+        title="Dashboard"
+        barColorWhenSelected="#000000"/>
+    <tab
+        icon="@drawable/ic_home"
+        id="@+id/tab_home"
+        title="Home"
+        barColorWhenSelected="#000000"/>
+    <tab
+        icon="@drawable/ic_swap_horiz"
+        id="@+id/tab_transactions"
+        title="Transactions"
+        barColorWhenSelected="#000000"/>
+</tabs>

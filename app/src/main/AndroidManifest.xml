@@ -20,6 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".students_home"
+            android:label="HOSTEL MANAGEMENT SYSTEM"
+            android:resizeableActivity="true"
+            android:theme="@style/StudentsHome">
+        </activity>
     </application>
 
 </manifest>

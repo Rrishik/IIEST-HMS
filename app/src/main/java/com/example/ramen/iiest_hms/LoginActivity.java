@@ -1,8 +1,8 @@
 package com.example.ramen.iiest_hms;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -31,8 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private TextView mSIDView;
     private EditText mPasswordView;
-    private View mProgressView;
     private View mLoginFormView;
+    private ProgressDialog mProgressView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +53,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        mProgressView = new ProgressDialog(LoginActivity.this);
+        mProgressView.setMessage("Authenticating...");
+        mProgressView.setCancelable(true);
+        mProgressView.setCanceledOnTouchOutside(false);
+
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -62,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
     }
 
 
@@ -94,9 +98,16 @@ public class LoginActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        // Check for a valid Student ID.
+        // Check for a empty Student ID.
         if (TextUtils.isEmpty(sid)) {
             mSIDView.setError(getString(R.string.error_field_required));
+            focusView = mSIDView;
+            cancel = true;
+        }
+
+        // Check for an invalid Student ID.
+        if (TextUtils.getTrimmedLength(sid) != 9) {
+            mSIDView.setError(getString(R.string.error_invalid_sid));
             focusView = mSIDView;
             cancel = true;
         }
@@ -117,37 +128,13 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        if (show)
+            mProgressView.show();
+        else
+            mProgressView.dismiss();
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
     }
 
 
@@ -175,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.d("params", paramsQuery);
 
             try {
-                response = NetworkUtils.okHttpPostRequest(urlString,paramsQuery);
+                response = NetworkUtils.okHttpPostRequest(urlString, paramsQuery);
                 return response;
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -192,6 +179,8 @@ public class LoginActivity extends AppCompatActivity {
                 PageParser p = new PageParser(LoginActivity.this, success);
                 if (p.checkLogin()) {
                     Toast.makeText(LoginActivity.this, "Login Success!!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, students_home.class);
+                    startActivity(intent);
                 } else {
                     Toast.makeText(LoginActivity.this, "Login Failure!!", Toast.LENGTH_SHORT).show();
                     mPasswordView.setError(getString(R.string.error_incorrect_password));
