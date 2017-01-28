@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.ramen.iiest_hms.LoginActivity">
+    tools:context="com.risk.iiest_hms.LoginActivity">
 
     <ScrollView
         android:id="@+id/login_form"
@@ -59,9 +59,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:background="@color/colorPrimaryDark"
                 android:text="@string/action_sign_in"
                 android:textColor="@android:color/white"
-                android:background="@color/colorPrimaryDark"
                 android:textStyle="bold" />
 
         </LinearLayout>
