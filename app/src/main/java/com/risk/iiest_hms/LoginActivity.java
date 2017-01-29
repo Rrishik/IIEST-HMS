@@ -1,10 +1,13 @@
 package com.risk.iiest_hms;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,11 +15,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.risk.iiest_hms.helper.Constants;
 import com.risk.iiest_hms.helper.NetworkUtils;
 import com.risk.iiest_hms.helper.PageParser;
 
@@ -24,13 +29,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private UserLoginTask mAuthTask = null;
 
-    private String url = "http://iiesthostel.iiests.ac.in/students/login_students";
-
+    private String loginUrl = "http://iiesthostel.iiests.ac.in/students/login_students";
+    private String ledgerUrl = "http://iiesthostel.iiests.ac.in/students/ledger";
     // UI references.
     private TextView mSIDView;
     private EditText mPasswordView;
     private View mLoginFormView;
     private ProgressDialog mProgressView;
+    private AlertDialog.Builder builder;
+    private Button mSignInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                if (id == R.id.login || id == EditorInfo.IME_ACTION_DONE) {
                     attemptLogin();
                     return true;
                 }
@@ -56,7 +63,9 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView.setCancelable(true);
         mProgressView.setCanceledOnTouchOutside(false);
 
-        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
+        builder = new AlertDialog.Builder(LoginActivity.this);
+
+        mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
-        View focusView = null;
+        View focusView = mSignInButton;
 
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password)) {
@@ -117,9 +126,13 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
+            if (focusView != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(focusView.getWindowToken(), 0);
+            }
             showProgress(true);
             mAuthTask = new UserLoginTask(sid, password);
-            mAuthTask.execute(url);
+            mAuthTask.execute(loginUrl, ledgerUrl);
         }
     }
 
@@ -140,7 +153,8 @@ public class LoginActivity extends AppCompatActivity {
 
         private final String mSid;
         private final String mPassword;
-        private String response;
+        private String loginResponse;
+        private String ledgerResponse;
 
         UserLoginTask(String sid, String password) {
             mSid = sid;
@@ -150,7 +164,8 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... urls) {
 
-            String urlString = urls[0];
+            String loginUrl = urls[0];
+            String ledgerUrl = urls[1];
             Uri.Builder builder = new Uri.Builder()
                     .appendQueryParameter("sid", mSid)
                     .appendQueryParameter("password", mPassword)
@@ -160,8 +175,10 @@ public class LoginActivity extends AppCompatActivity {
             Log.d("params", paramsQuery);
 
             try {
-                response = NetworkUtils.okHttpPostRequest(urlString, paramsQuery);
-                return response;
+                NetworkUtils n = new NetworkUtils();
+                loginResponse = n.okHttpPostRequest(loginUrl, paramsQuery);
+                ledgerResponse = n.okHttpPostRequest(ledgerUrl, paramsQuery);
+                return loginResponse;
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 return e.getMessage();
@@ -172,12 +189,15 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(final String success) {
             mAuthTask = null;
             showProgress(false);
+            Log.d("onPostExecute", ledgerResponse);
 
             if (success != null) {
                 PageParser p = new PageParser(LoginActivity.this, success);
                 if (p.checkLogin()) {
                     Toast.makeText(LoginActivity.this, "Login Success!!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, students_home.class);
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    intent.putExtra(Constants.Intent.LOGIN_PAGE_SOURCE, success);
+                    intent.putExtra(Constants.Intent.LEDGER_PAGE_SOURCE, ledgerResponse);
                     startActivity(intent);
                 } else {
                     Toast.makeText(LoginActivity.this, "Login Failure!!", Toast.LENGTH_SHORT).show();
@@ -185,6 +205,15 @@ public class LoginActivity extends AppCompatActivity {
                     mPasswordView.requestFocus();
                 }
             } else {
+                builder.setMessage("There seems to be a problem with your internet connection.\nPlease try again later!")
+                        .setTitle("OOPS!")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                builder.show();
 
             }
         }

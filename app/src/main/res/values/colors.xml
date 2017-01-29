@@ -4,5 +4,8 @@
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#FF4081</color>
     <color name="primary_text_material_light">#d9a657</color>
-    <color name="hostel_text">#fde3b7</color>
+    <color name="hostel_text">#ffe082</color>
+    <color name="home_background">#e0e0e0</color>
+    <color name="white">#ffffff</color>
+    <color name="bottombar">#212121</color>
 </resources>

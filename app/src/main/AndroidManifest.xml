@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".students_home"
+            android:name=".HomeActivity"
             android:label="HOSTEL MANAGEMENT SYSTEM"
             android:resizeableActivity="true"
             android:theme="@style/StudentsHome">

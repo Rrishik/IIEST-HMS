@@ -1,17 +1,17 @@
 <tabs>
     <tab
-        icon="@drawable/ic_dvr"
+        icon="@drawable/ic_dashboard"
         id="@+id/tab_dashboard"
         title="Dashboard"
         barColorWhenSelected="#000000"/>
     <tab
-        icon="@drawable/ic_home"
-        id="@+id/tab_home"
-        title="Home"
+        icon="@drawable/ic_person"
+        id="@+id/tab_profile"
+        title="Profile"
         barColorWhenSelected="#000000"/>
     <tab
-        icon="@drawable/ic_swap_horiz"
-        id="@+id/tab_transactions"
-        title="Transactions"
+        icon="@drawable/ic_history"
+        id="@+id/tab_history"
+        title="History"
         barColorWhenSelected="#000000"/>
 </tabs>
