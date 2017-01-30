@@ -25,14 +25,14 @@ public class NetworkUtils {
                 .build();
     }
 
-    public String okHttpPostRequest(String url, String params) {
+    public String okHttpPostRequest(String url, String params, String type) {
 
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+        MediaType mediaType = MediaType.parse(type);
         RequestBody body = RequestBody.create(mediaType, params);
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .addHeader("content-type", "application/x-www-form-urlencoded")
+                .addHeader("content-type", type)
                 .addHeader("cache-control", "no-cache")
                 .build();
 

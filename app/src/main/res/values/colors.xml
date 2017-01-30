@@ -5,7 +5,10 @@
     <color name="colorAccent">#FF4081</color>
     <color name="primary_text_material_light">#d9a657</color>
     <color name="hostel_text">#ffe082</color>
-    <color name="home_background">#e0e0e0</color>
+    <color name="home_background">#eeeeee</color>
     <color name="white">#ffffff</color>
-    <color name="bottombar">#212121</color>
+    <color name="inactive_white">#e0e0e0</color>
+    <color name="materialGrey800">#424242</color>
+    <color name="Black">#000000</color>
+    <color name="materialGrey300">#e0e0e0</color>
 </resources>

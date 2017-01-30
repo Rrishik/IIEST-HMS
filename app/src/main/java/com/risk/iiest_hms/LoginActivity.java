@@ -172,15 +172,16 @@ public class LoginActivity extends AppCompatActivity {
                     .appendQueryParameter("type", "2")
                     .appendQueryParameter("login", "");
             String paramsQuery = builder.build().getEncodedQuery();
+            String type = "application/x-www-form-urlencoded";
             Log.d("params", paramsQuery);
 
             try {
                 NetworkUtils n = new NetworkUtils();
-                loginResponse = n.okHttpPostRequest(loginUrl, paramsQuery);
-                ledgerResponse = n.okHttpPostRequest(ledgerUrl, paramsQuery);
+                loginResponse = n.okHttpPostRequest(loginUrl, paramsQuery, type);
+                ledgerResponse = n.okHttpPostRequest(ledgerUrl, paramsQuery, type);
                 return loginResponse;
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace();
                 return e.getMessage();
             }
         }
@@ -189,7 +190,6 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(final String success) {
             mAuthTask = null;
             showProgress(false);
-            Log.d("onPostExecute", ledgerResponse);
 
             if (success != null) {
                 PageParser p = new PageParser(LoginActivity.this, success);

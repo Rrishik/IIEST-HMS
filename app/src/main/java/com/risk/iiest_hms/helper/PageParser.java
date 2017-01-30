@@ -4,11 +4,14 @@ package com.risk.iiest_hms.helper;
 import android.content.Context;
 import android.util.Log;
 
+import com.risk.iiest_hms.adapter.AdapterData;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PageParser {
@@ -51,5 +54,24 @@ public class PageParser {
         return username.text();
     }
 
-    //public List<String>
+    public List<AdapterData> getLedger() {
+        String ledger, amount, date;
+        List<AdapterData> list = new ArrayList<>();
+        Element tbody = mDocument.getElementsByTag("tbody").get(0);
+        Elements rows = tbody.getElementsByTag("tr");
+
+        for (Element row : rows) {
+            Elements td = row.getElementsByTag("td");
+            if (td.get(2).text().trim().equals("Rcpt")) {
+                date = td.get(1).text().split("<br>")[0].trim();
+                String[] led_amt = td.get(4).text().split("<br>");
+                ledger = led_amt[0].trim();
+
+                AdapterData data = new AdapterData(ledger, date);
+                list.add(data);
+            }
+
+        }
+        return list;
+    }
 }

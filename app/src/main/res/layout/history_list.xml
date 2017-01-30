@@ -11,7 +11,8 @@
         android:gravity="center_vertical"
         android:maxLines="1"
         android:padding="12dp"
-        android:textSize="18dp" />
+        android:textColor="@color/materialGrey800"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tv_date"
@@ -21,7 +22,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="4sp"
         android:layout_marginRight="4sp"
-        android:text="Dec 12, 2014"
+        android:textColor="@color/colorAccent"
         android:textSize="12sp"
         android:textStyle="italic" />
 
@@ -29,7 +30,8 @@
         android:id="@+id/v_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp" />
+        android:layout_marginLeft="8dp"
+        android:background="@color/materialGrey300"
+        android:layout_marginRight="8dp" />
 
 </RelativeLayout>

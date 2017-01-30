@@ -1,17 +1,17 @@
 <tabs>
     <tab
+        barColorWhenSelected="@color/colorPrimaryDark"
         icon="@drawable/ic_dashboard"
         id="@+id/tab_dashboard"
-        title="Dashboard"
-        barColorWhenSelected="#000000"/>
+        title="Dashboard" />
     <tab
+        barColorWhenSelected="@color/colorPrimaryDark"
         icon="@drawable/ic_person"
         id="@+id/tab_profile"
-        title="Profile"
-        barColorWhenSelected="#000000"/>
+        title="Profile" />
     <tab
+        barColorWhenSelected="@color/colorPrimaryDark"
         icon="@drawable/ic_history"
         id="@+id/tab_history"
-        title="History"
-        barColorWhenSelected="#000000"/>
+        title="History" />
 </tabs>
