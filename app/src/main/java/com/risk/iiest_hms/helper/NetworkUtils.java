@@ -1,31 +1,15 @@
-package com.risk.iiest_hms.helper;
+package com.risk.iiest_hms.Helper;
 
 
 import java.io.IOException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 
-import okhttp3.JavaNetCookieJar;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class NetworkUtils {
 
-    private CookieManager cookieManager;
-    private OkHttpClient client;
-
-    public NetworkUtils() {
-
-        cookieManager = new CookieManager();
-        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-        client = new OkHttpClient.Builder()
-                .cookieJar(new JavaNetCookieJar(cookieManager))
-                .build();
-    }
-
-    public String okHttpPostRequest(String url, String params, String type) {
+    public static String okHttpPostRequest(String url, String params, String type) {
 
         MediaType mediaType = MediaType.parse(type);
         RequestBody body = RequestBody.create(mediaType, params);
@@ -36,12 +20,15 @@ public class NetworkUtils {
                 .addHeader("cache-control", "no-cache")
                 .build();
 
+        String responseString;
+
         try {
-            String response = client.newCall(request).execute().body().string();
-            return response;
+            responseString = NetworkClient.getInstance().getResponse(request).body().string();
         } catch (IOException e) {
             e.printStackTrace();
+            responseString = null;
         }
-        return null;
+
+        return responseString;
     }
 }

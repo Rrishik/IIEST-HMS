@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303f9f</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#8e0a26</color>
+    <color name="colorPrimaryDark">#72081e</color>
+    <color name="colorAccent">#757575</color>
+    <color name="darkGrey">#212121</color>
     <color name="primary_text_material_light">#d9a657</color>
     <color name="hostel_text">#ffe082</color>
     <color name="home_background">#eeeeee</color>
     <color name="white">#ffffff</color>
-    <color name="inactive_white">#e0e0e0</color>
+    <color name="inactive_white">#bdbdbd</color>
     <color name="materialGrey800">#424242</color>
     <color name="Black">#000000</color>
-    <color name="materialGrey300">#e0e0e0</color>
+    <color name="materialGrey400">#b4bdbdbd</color>
 </resources>

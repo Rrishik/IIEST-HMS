@@ -1,10 +1,9 @@
-package com.risk.iiest_hms.helper;
+package com.risk.iiest_hms.Helper;
 
 
-import android.content.Context;
 import android.util.Log;
 
-import com.risk.iiest_hms.adapter.AdapterData;
+import com.risk.iiest_hms.Adapter.AdapterData;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,12 +15,15 @@ import java.util.List;
 
 public class PageParser {
 
-    private Context mContext;
     private Document mDocument;
 
-    public PageParser(Context context, String responsePage) {
-        mContext = context;
-        mDocument = Jsoup.parse(responsePage);
+    public PageParser(String responsePage) {
+
+        if (responsePage != null) {
+            mDocument = Jsoup.parse(responsePage);
+            Log.d("parser", responsePage);
+        } else
+            Log.d("parser", "pagesource is empty!");
     }
 
     public boolean checkLogin() {
@@ -29,11 +31,7 @@ public class PageParser {
         Elements username = mDocument.getElementsByClass("username");
         Log.d("parser  ", "checkLogin: " + username.toString());
 
-        if (username.toString().length() != 0) {
-            ;
-            return (true);
-        }
-        return false;
+        return username.toString().length() != 0;
     }
 
     public boolean checkDues() {
@@ -42,10 +40,7 @@ public class PageParser {
         Element dues_tr = spaceunder.get(1);
         Elements dues_td = dues_tr.getElementsByTag("td");
         Log.d("CheckDues", dues_td.toString());
-        if (dues_td.text().length() != 0) {
-            return false;
-        }
-        return true;
+        return dues_td.text().length() == 0;
     }
 
     public String getUserName() {

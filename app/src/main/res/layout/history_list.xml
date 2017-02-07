@@ -10,7 +10,7 @@
         android:layout_centerVertical="true"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:padding="12dp"
+        android:padding="16dp"
         android:textColor="@color/materialGrey800"
         android:textSize="18sp" />
 
@@ -21,7 +21,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="4sp"
-        android:layout_marginRight="4sp"
+        android:layout_marginRight="12sp"
         android:textColor="@color/colorAccent"
         android:textSize="12sp"
         android:textStyle="italic" />
@@ -30,8 +30,8 @@
         android:id="@+id/v_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="8dp"
-        android:background="@color/materialGrey300"
-        android:layout_marginRight="8dp" />
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@color/materialGrey400" />
 
 </RelativeLayout>

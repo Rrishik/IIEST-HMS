@@ -1,77 +1,32 @@
 package com.risk.iiest_hms;
 
-import android.location.GnssMeasurementsEvent;
+
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
+import android.view.MenuItem;
 
-import com.risk.iiest_hms.adapter.HistoryAdapter;
-import com.risk.iiest_hms.helper.Constants;
-import com.risk.iiest_hms.helper.PageParser;
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
+import com.risk.iiest_hms.Fragments.DashboardFragment;
+import com.risk.iiest_hms.Fragments.HistoryFragment;
+import com.risk.iiest_hms.Fragments.ProfileFragment;
+import com.risk.iiest_hms.Helper.Constants;
 
-public class HomeActivity extends AppCompatActivity implements HistoryAdapter.RecyclerViewClickListener {
+public class HomeActivity extends AppCompatActivity {
 
     private String TAG = getClass().getSimpleName();
 
-    private BottomBar bottomBar;
-
-    private CardView cDashboardProfile;
-    private TextView mDashBoardText;
-    private TextView mProfileText;
-
-    private CardView cChangePasswd;
-    private TextView mChangePassword;
-
-    private CardView cLogout;
-    private TextView mLogout;
-
-    private RecyclerView mHistoryList;
-
     private String login_page_source;
-    private String ledger_page_source;
-    private PageParser pLogin, pLedger;
-    private HistoryAdapter mAdapter;
+    private BottomNavigationView bottomNavigationView;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        bottomBar = (BottomBar) findViewById(R.id.bottomBar);
-
-        cDashboardProfile = (CardView) findViewById(R.id.cv_db_p);
-        mDashBoardText = (TextView) findViewById(R.id.tv_dashboard);
-
-        mProfileText = (TextView) findViewById(R.id.tv_profile);
-
-        cChangePasswd = (CardView) findViewById(R.id.cv_change_password);
-        mChangePassword = (TextView) findViewById(R.id.tv_change_password);
-
-        cLogout = (CardView) findViewById(R.id.cv_logout);
-        mLogout = (TextView) findViewById(R.id.tv_logout);
-        cLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        mHistoryList = (RecyclerView) findViewById(R.id.rv_history);
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mHistoryList.setLayoutManager(linearLayoutManager);
-        mHistoryList.setHasFixedSize(true);
-
-        mAdapter = new HistoryAdapter(HomeActivity.this, this);
-        mHistoryList.setAdapter(mAdapter);
 
         Bundle extras = getIntent().getExtras();
 
@@ -79,70 +34,40 @@ public class HomeActivity extends AppCompatActivity implements HistoryAdapter.Re
             Log.e(TAG, "Page Source is empty!");
         } else {
             login_page_source = extras.getString(Constants.Intent.LOGIN_PAGE_SOURCE);
-            ledger_page_source = extras.getString(Constants.Intent.LEDGER_PAGE_SOURCE);
         }
 
-        bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, new DashboardFragment());
+        fragmentTransaction.commit();
+
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onTabSelected(@IdRes int tabId) {
-                pLogin = new PageParser(HomeActivity.this, login_page_source);
-                pLedger = new PageParser(HomeActivity.this, ledger_page_source);
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                if (tabId == R.id.tab_dashboard) {
-                    showDashboard();
-                    if (pLogin.checkDues())
-                        mDashBoardText.setText("Oops You have Pending Dues! \n Please pay your dues at the earliest!");
-                    else
-                        mDashBoardText.setText("You have no dues Pending!");
+                Fragment fragment = null;
+                switch (item.getItemId()) {
+                    case R.id.bb_dashboard:
+                        fragment = new DashboardFragment();
+                        break;
+
+                    case R.id.bb_profile:
+                        fragment = new ProfileFragment();
+                        break;
+
+                    case R.id.bb_history:
+                        fragment = new HistoryFragment();
+                        break;
                 }
 
-                if (tabId == R.id.tab_profile) {
-                    showProfile();
-                    Log.d(TAG, "onTabSelected: " + pLedger.getUserName());
-                    mProfileText.setText(pLedger.getUserName());
+                if (fragment != null) {
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, fragment);
+                    fragmentTransaction.commit();
                 }
 
-                if (tabId == R.id.tab_history) {
-                    showHistory();
-
-                    PageParser p = new PageParser(HomeActivity.this,ledger_page_source);
-                    mAdapter.setmDataset(p.getLedger());
-                }
+                return true;
             }
         });
-
-
-    }
-
-    private void showDashboard() {
-        cDashboardProfile.setVisibility(View.VISIBLE);
-        mDashBoardText.setVisibility(View.VISIBLE);
-        mProfileText.setVisibility(View.GONE);
-        cChangePasswd.setVisibility(View.GONE);
-        cLogout.setVisibility(View.GONE);
-        mHistoryList.setVisibility(View.GONE);
-    }
-
-    private void showProfile() {
-        cDashboardProfile.setVisibility(View.VISIBLE);
-        mDashBoardText.setVisibility(View.GONE);
-        mProfileText.setVisibility(View.VISIBLE);
-        cChangePasswd.setVisibility(View.VISIBLE);
-        cLogout.setVisibility(View.VISIBLE);
-        mChangePassword.setVisibility(View.VISIBLE);
-        mLogout.setVisibility(View.VISIBLE);
-        mHistoryList.setVisibility(View.GONE);
-    }
-
-    private void showHistory(){
-        mHistoryList.setVisibility(View.VISIBLE);
-        cDashboardProfile.setVisibility(View.GONE);
-        cChangePasswd.setVisibility(View.GONE);
-        cLogout.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onClickListener(String ledger) {
-
     }
 }

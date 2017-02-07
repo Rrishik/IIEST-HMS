@@ -13,4 +13,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="dashboard">Dashboard</string>
+    <string name="profile">Profile</string>
+    <string name="history">History</string>
+    <string name="saved_sid">SID</string>
+    <string name="saved_password">PASSWORD</string>
+    <string name="saved_remember_me">TRUE</string>
 </resources>
