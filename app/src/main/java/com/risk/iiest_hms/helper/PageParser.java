@@ -50,7 +50,7 @@ public class PageParser {
     }
 
     public List<AdapterData> getLedger() {
-        String ledger, amount, date;
+        String ledger, fine, date, link;
         List<AdapterData> list = new ArrayList<>();
         Element tbody = mDocument.getElementsByTag("tbody").get(0);
         Elements rows = tbody.getElementsByTag("tr");
@@ -60,13 +60,14 @@ public class PageParser {
             if (td.get(2).text().trim().equals("Rcpt")) {
                 date = td.get(1).text().split("<br>")[0].trim();
                 String[] led_amt = td.get(4).text().split("<br>");
-                ledger = led_amt[0].trim();
-
-                AdapterData data = new AdapterData(ledger, date);
+                ledger = led_amt[0].substring(0, led_amt[0].indexOf("+"));
+                fine = "Fine " + led_amt[0].substring(led_amt[0].indexOf("+") + 2);
+                link = td.get(11).getElementsByTag("a").get(1).attr("href");
+                AdapterData data = new AdapterData(ledger, date, fine, link);
                 list.add(data);
             }
-
         }
         return list;
     }
+
 }

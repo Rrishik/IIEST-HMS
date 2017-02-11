@@ -2,11 +2,15 @@ package com.risk.iiest_hms.Fragments;
 
 
 import android.app.Fragment;
-import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,9 +24,11 @@ import com.risk.iiest_hms.Helper.AsyncTasks;
 import com.risk.iiest_hms.Helper.PageParser;
 import com.risk.iiest_hms.R;
 
-public class HistoryFragment extends Fragment implements HistoryAdapter.RecyclerViewClickListener {
-    private String TAG = getClass().getSimpleName();
+import static android.content.Intent.ACTION_VIEW;
 
+public class HistoryFragment extends Fragment implements HistoryAdapter.RecyclerViewClickListener {
+    private static HistoryFragment mInstance;
+    private String TAG = getClass().getSimpleName();
     private AsyncTasks mLoadTasks = null;
 
     private String ledger_link = "http://iiesthostel.iiests.ac.in/students/ledger";
@@ -33,10 +39,17 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.Recycler
 
     private SharedPreferences sharedPreferences;
 
+    public static HistoryFragment getInstance() {
+        if (mInstance == null) {
+            mInstance = new HistoryFragment();
+        }
+        return mInstance;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         return inflater.inflate(R.layout.fragment_history, container, false);
     }
 
@@ -45,15 +58,18 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.Recycler
         super.onActivityCreated(savedInstanceState);
         mHistoryList = (RecyclerView) getView().findViewById(R.id.rv_history);
 
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Payment History");
+
         progressBar = (ProgressBar) getView().findViewById(R.id.progressBarLedger);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mHistoryList.setLayoutManager(linearLayoutManager);
         mHistoryList.setHasFixedSize(true);
 
-        mHistoryAdapter = new HistoryAdapter(getActivity(), this);
+        mHistoryAdapter = HistoryAdapter.getInstance(getActivity(), this);
         mHistoryList.setAdapter(mHistoryAdapter);
-        loadData();
+        if (mHistoryAdapter.getmDataset() == null)
+            loadData();
     }
 
     private void loadData() {
@@ -69,9 +85,21 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.Recycler
             @Override
             public void onPostExecute(String response) {
                 mLoadTasks = null;
-                PageParser p = new PageParser(response);
-                mHistoryAdapter.setmDataset(p.getLedger());
                 showProgress(false);
+                if (response != null) {
+                    PageParser p = new PageParser(response);
+                    mHistoryAdapter.setmDataset(p.getLedger());
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Could not fetch details!\nTry again later")
+                            .setTitle("Network Error!")
+                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            }).show();
+                }
             }
 
             @Override
@@ -95,7 +123,9 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.Recycler
     }
 
     @Override
-    public void onClickListener(String ledger) {
-
+    public void onClickListener(String rcpt_link) {
+        Intent intent = new Intent(ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(rcpt_link), "application/pdf");
+        getActivity().startActivity(intent);
     }
 }

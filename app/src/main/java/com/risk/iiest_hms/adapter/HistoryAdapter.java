@@ -15,14 +15,23 @@ import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryAdapterViewHolder> {
 
+    private static HistoryAdapter mInstance;
     private final RecyclerViewClickListener mOnClickListener;
-    private List<AdapterData> mDataset;
+    private List<AdapterData> mDataset = null;
     private Context mContext;
+
 
     public HistoryAdapter(Context context, RecyclerViewClickListener listener) {
         mOnClickListener = listener;
         mContext = context;
         mDataset = new ArrayList<>();
+    }
+
+    public static HistoryAdapter getInstance(Context context, RecyclerViewClickListener listener) {
+        if (mInstance == null) {
+            mInstance = new HistoryAdapter(context, listener);
+        }
+        return mInstance;
     }
 
     @Override
@@ -36,6 +45,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryA
     public void onBindViewHolder(HistoryAdapterViewHolder holder, int position) {
         holder.mLedgerTv.setText(mDataset.get(position).mLedger);
         holder.mDateTv.setText(mDataset.get(position).mDate);
+        holder.mFineTv.setText(mDataset.get(position).mFine);
     }
 
     @Override
@@ -45,9 +55,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryA
         return mDataset.size();
     }
 
-    public void clear() {
-        mDataset.clear();
-        notifyDataSetChanged();
+    public List<AdapterData> getmDataset() {
+        if (mDataset.isEmpty()) {
+            return null;
+        }
+        return mDataset;
     }
 
     public void setmDataset(List<AdapterData> adapterDataList) {
@@ -63,18 +75,20 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryA
     class HistoryAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView mLedgerTv;
         final TextView mDateTv;
+        final TextView mFineTv;
 
         HistoryAdapterViewHolder(View view) {
             super(view);
             mLedgerTv = (TextView) view.findViewById(R.id.tv_ledger);
             mDateTv = (TextView) view.findViewById(R.id.tv_date);
+            mFineTv = (TextView) view.findViewById(R.id.tv_fine);
             view.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            String ledger = mDataset.get(getAdapterPosition()).mLedger;
-            mOnClickListener.onClickListener(ledger);
+            String rcpt_link = mDataset.get(getAdapterPosition()).mReceiptLink;
+            mOnClickListener.onClickListener(rcpt_link);
         }
     }
 }

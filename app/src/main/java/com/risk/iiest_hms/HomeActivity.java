@@ -56,7 +56,7 @@ public class HomeActivity extends AppCompatActivity {
                         break;
 
                     case R.id.bb_history:
-                        fragment = new HistoryFragment();
+                        fragment = HistoryFragment.getInstance();
                         break;
                 }
 

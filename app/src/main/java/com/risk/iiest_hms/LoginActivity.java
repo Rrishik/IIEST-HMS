@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -89,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         builder = new AlertDialog.Builder(LoginActivity.this);
 
         mCheckBox = (CheckBox) findViewById(R.id.checkBox);
-        sharedPreferences = (LoginActivity.this).getPreferences(Context.MODE_PRIVATE);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean saved_remember_me = sharedPreferences.getBoolean(getString(R.string.saved_remember_me), false);
 
         if (saved_remember_me) {

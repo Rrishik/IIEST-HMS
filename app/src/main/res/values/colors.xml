@@ -11,5 +11,7 @@
     <color name="inactive_white">#bdbdbd</color>
     <color name="materialGrey800">#424242</color>
     <color name="Black">#000000</color>
-    <color name="materialGrey400">#b4bdbdbd</color>
+    <color name="materialGrey600">#757575</color>
+    <color name="materialGrey400">#bdbdbd</color>
+    <color name="transparent">#00000000</color>
 </resources>
