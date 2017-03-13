@@ -7,19 +7,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.risk.iiest_hms.Fragments.DashboardFragment;
 import com.risk.iiest_hms.Fragments.HistoryFragment;
 import com.risk.iiest_hms.Fragments.ProfileFragment;
-import com.risk.iiest_hms.Helper.Constants;
 
 public class HomeActivity extends AppCompatActivity {
 
     private String TAG = getClass().getSimpleName();
+    private Fragment fragment;
 
-    private String login_page_source;
     private BottomNavigationView bottomNavigationView;
 
 
@@ -28,16 +26,13 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Bundle extras = getIntent().getExtras();
+        final Bundle extras = getIntent().getExtras();
 
-        if (extras == null) {
-            Log.e(TAG, "Page Source is empty!");
-        } else {
-            login_page_source = extras.getString(Constants.Intent.LOGIN_PAGE_SOURCE);
-        }
+        fragment = new DashboardFragment();
+        fragment.setArguments(extras);
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, new DashboardFragment());
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
 
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
@@ -45,14 +40,16 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                Fragment fragment = null;
+                fragment = null;
                 switch (item.getItemId()) {
                     case R.id.bb_dashboard:
                         fragment = new DashboardFragment();
+                        fragment.setArguments(extras);
                         break;
 
                     case R.id.bb_profile:
                         fragment = new ProfileFragment();
+                        fragment.setArguments(extras);
                         break;
 
                     case R.id.bb_history:
@@ -65,7 +62,6 @@ public class HomeActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.frame_layout, fragment);
                     fragmentTransaction.commit();
                 }
-
                 return true;
             }
         });

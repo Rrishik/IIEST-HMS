@@ -1,18 +1,22 @@
 package com.risk.iiest_hms;
 
 import android.app.ProgressDialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,29 +24,35 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.risk.iiest_hms.Helper.AsyncTasks;
 import com.risk.iiest_hms.Helper.Constants;
 import com.risk.iiest_hms.Helper.PageParser;
+import com.risk.iiest_hms.Job.DueCheckJob;
 
 public class LoginActivity extends AppCompatActivity {
 
     private AsyncTasks mAuthTask = null;
+    private int JOB_ID = 1;
 
     private String loginUrl = "http://iiesthostel.iiests.ac.in/students/login_students";
+
     // UI references.
+    private LinearLayout mLoginLayout;
     private TextView mSIDView;
-    private EditText mPasswordView;
+    private TextView mPasswordView;
     private ImageButton mShowPassword;
     private ProgressDialog mProgressView;
-    private AlertDialog.Builder builder;
     private CheckBox mCheckBox;
+    private Switch mSwitch;
     private Button mSignInButton;
     private boolean show_passwd = false;
+    private boolean saved_remember_me;
 
     private SharedPreferences sharedPreferences;
 
@@ -51,14 +61,16 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        mLoginLayout = (LinearLayout) findViewById(R.id.login_layout);
         // Set up the login form.
         mSIDView = (TextView) findViewById(R.id.sid);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = (TextView) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_ACTION_DONE) {
+                if (id == EditorInfo.IME_ACTION_DONE) {
                     attemptLogin();
                     return true;
                 }
@@ -87,11 +99,11 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView.setCancelable(true);
         mProgressView.setCanceledOnTouchOutside(false);
 
-        builder = new AlertDialog.Builder(LoginActivity.this);
-
         mCheckBox = (CheckBox) findViewById(R.id.checkBox);
+
+        mSwitch = (Switch) findViewById(R.id.switch1);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        boolean saved_remember_me = sharedPreferences.getBoolean(getString(R.string.saved_remember_me), false);
+        saved_remember_me = sharedPreferences.getBoolean(getString(R.string.saved_remember_me), false);
 
         if (saved_remember_me) {
             mSIDView.setText(sharedPreferences.getString(getString(R.string.saved_sid), null));
@@ -108,6 +120,17 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setIcon(R.drawable.ic_notif);
+        if (saved_remember_me) {
+            mLoginLayout.setVisibility(View.GONE);
+            showProgress(true);
+            login(sharedPreferences.getString(getString(R.string.saved_sid), null), sharedPreferences.getString(getString(R.string.saved_password), null));
+        }
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -172,7 +195,12 @@ public class LoginActivity extends AppCompatActivity {
                 sharedPreferences.edit()
                         .putBoolean(getString(R.string.saved_remember_me), false)
                         .apply();
+                cancelJobs();
             }
+
+
+            if (mSwitch.isChecked())
+                schedule();
 
             if (focusView != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -183,11 +211,34 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void schedule() {
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        PersistableBundle bundle = new PersistableBundle();
+        bundle.putString(Constants.Job.SID, mSIDView.getText().toString());
+        bundle.putString(Constants.Job.PASSWORD, mPasswordView.getText().toString());
+
+        ComponentName serviceName = new ComponentName(getApplicationContext(), DueCheckJob.class);
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID, serviceName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic(86400000)
+                .setExtras(bundle)
+                .build();
+        cancelJobs();
+        int result = jobScheduler.schedule(jobInfo);
+        if (result == JobScheduler.RESULT_SUCCESS)
+            Toast.makeText(getApplicationContext(), "You'll be notified about your dues :)", Toast.LENGTH_SHORT).show();
+    }
+
+    private void cancelJobs() {
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.cancelAll();
+    }
+
     /**
      * Shows the progress UI and hides the login form.
      */
     private void showProgress(final boolean show) {
-
         if (show)
             mProgressView.show();
         else
@@ -202,7 +253,6 @@ public class LoginActivity extends AppCompatActivity {
                 .appendQueryParameter("login", "");
         String query = builder.build().getEncodedQuery();
         String type = "application/x-www-form-urlencoded";
-        Log.d("params", query);
         mAuthTask = new AsyncTasks(query, type, new AsyncTasks.AsyncTasksListener() {
             @Override
             public void onPostExecute(String response) {
@@ -214,6 +264,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (p.checkLogin()) {
                         Toast.makeText(LoginActivity.this, "Login Success!!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        LoginActivity.this.finish();
                         intent.putExtra(Constants.Intent.LOGIN_PAGE_SOURCE, response);
                         startActivity(intent);
                     } else {

@@ -1,7 +1,6 @@
 package com.risk.iiest_hms.Helper;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class AsyncTasks extends AsyncTask<String, String, String> {
 
@@ -34,7 +33,6 @@ public class AsyncTasks extends AsyncTask<String, String, String> {
 
         if (listener != null) {
             if (s == null) {
-                Log.d("AsyncTasks", "onPostExecute: respnonse null!!");
                 listener.onPostExecute(null);
             } else
                 listener.onPostExecute(s);

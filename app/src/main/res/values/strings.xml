@@ -19,4 +19,7 @@
     <string name="saved_sid">SID</string>
     <string name="saved_password">PASSWORD</string>
     <string name="saved_remember_me">Remember me</string>
+    <string name="change_password">CHANGE PASSWORD</string>
+    <string name="re_enter_new_password">Re-enter new password</string>
+    <string name="enter_new_password">Enter new password</string>
 </resources>

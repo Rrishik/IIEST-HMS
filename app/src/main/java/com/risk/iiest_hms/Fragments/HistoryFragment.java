@@ -13,7 +13,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +79,6 @@ public class HistoryFragment extends Fragment implements HistoryAdapter.Recycler
                 .appendQueryParameter("login", "");
         String query = builder.build().getEncodedQuery();
         String type = "application/x-www-form-urlencoded";
-        Log.d("params", query);
         mLoadTasks = new AsyncTasks(query, type, new AsyncTasks.AsyncTasksListener() {
             @Override
             public void onPostExecute(String response) {

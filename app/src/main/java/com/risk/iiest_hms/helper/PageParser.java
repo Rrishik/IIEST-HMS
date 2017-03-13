@@ -1,8 +1,6 @@
 package com.risk.iiest_hms.Helper;
 
 
-import android.util.Log;
-
 import com.risk.iiest_hms.Adapter.AdapterData;
 
 import org.jsoup.Jsoup;
@@ -21,16 +19,12 @@ public class PageParser {
 
         if (responsePage != null) {
             mDocument = Jsoup.parse(responsePage);
-            Log.d("parser", responsePage);
-        } else
-            Log.d("parser", "pagesource is empty!");
+        }
     }
 
     public boolean checkLogin() {
 
         Elements username = mDocument.getElementsByClass("username");
-        Log.d("parser  ", "checkLogin: " + username.toString());
-
         return username.toString().length() != 0;
     }
 
@@ -39,7 +33,6 @@ public class PageParser {
         Elements spaceunder = mDocument.getElementsByClass("spaceUnder");
         Element dues_tr = spaceunder.get(1);
         Elements dues_td = dues_tr.getElementsByTag("td");
-        Log.d("CheckDues", dues_td.toString());
         return dues_td.text().length() == 0;
     }
 
