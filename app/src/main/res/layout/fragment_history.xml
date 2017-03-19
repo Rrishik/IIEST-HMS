@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.risk.iiest_hms.Fragments.HistoryFragment">
+    tools:context="com.risk.IIEST_HMS.Fragments.HistoryFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_history"

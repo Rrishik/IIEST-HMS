@@ -1,7 +1,7 @@
-package com.risk.iiest_hms.Helper;
+package com.risk.IIEST_HMS.Helper;
 
 
-import com.risk.iiest_hms.Adapter.AdapterData;
+import com.risk.IIEST_HMS.Adapter.AdapterData;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

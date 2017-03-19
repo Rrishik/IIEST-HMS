@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IIEST-HMS</string>
+    <string name="app_name">Hostel Management System, IIEST Shibpur</string>
 
     <!-- Strings related to login -->
     <string name="prompt_sid">Student ID</string>
@@ -10,9 +10,6 @@
     <string name="error_invalid_password">Password cannot be empty!</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
     <string name="dashboard">Dashboard</string>
     <string name="profile">Profile</string>
     <string name="history">History</string>

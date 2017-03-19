@@ -1,4 +1,4 @@
-package com.risk.iiest_hms.Fragments;
+package com.risk.IIEST_HMS.Fragments;
 
 
 import android.app.Fragment;
@@ -20,11 +20,11 @@ import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.risk.iiest_hms.Helper.AsyncTasks;
-import com.risk.iiest_hms.Helper.Constants;
-import com.risk.iiest_hms.Helper.PageParser;
-import com.risk.iiest_hms.LoginActivity;
-import com.risk.iiest_hms.R;
+import com.risk.IIEST_HMS.Helper.AsyncTasks;
+import com.risk.IIEST_HMS.Helper.Constants;
+import com.risk.IIEST_HMS.Helper.PageParser;
+import com.risk.IIEST_HMS.LoginActivity;
+import com.risk.IIEST_HMS.R;
 
 public class ProfileFragment extends Fragment {
 

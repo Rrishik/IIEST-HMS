@@ -1,4 +1,4 @@
-package com.risk.iiest_hms.Adapter;
+package com.risk.IIEST_HMS.Adapter;
 
 
 public class AdapterData {

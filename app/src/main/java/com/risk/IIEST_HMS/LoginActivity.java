@@ -1,4 +1,4 @@
-package com.risk.iiest_hms;
+package com.risk.IIEST_HMS;
 
 import android.app.ProgressDialog;
 import android.app.job.JobInfo;
@@ -30,10 +30,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.risk.iiest_hms.Helper.AsyncTasks;
-import com.risk.iiest_hms.Helper.Constants;
-import com.risk.iiest_hms.Helper.PageParser;
-import com.risk.iiest_hms.Job.DueCheckJob;
+import com.risk.IIEST_HMS.Helper.AsyncTasks;
+import com.risk.IIEST_HMS.Helper.Constants;
+import com.risk.IIEST_HMS.Helper.PageParser;
+import com.risk.IIEST_HMS.Job.DueCheckJob;
 
 public class LoginActivity extends AppCompatActivity {
 

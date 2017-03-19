@@ -1,4 +1,4 @@
-package com.risk.iiest_hms;
+package com.risk.IIEST_HMS;
 
 
 import android.app.Fragment;
@@ -9,9 +9,9 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.risk.iiest_hms.Fragments.DashboardFragment;
-import com.risk.iiest_hms.Fragments.HistoryFragment;
-import com.risk.iiest_hms.Fragments.ProfileFragment;
+import com.risk.IIEST_HMS.Fragments.DashboardFragment;
+import com.risk.IIEST_HMS.Fragments.HistoryFragment;
+import com.risk.IIEST_HMS.Fragments.ProfileFragment;
 
 public class HomeActivity extends AppCompatActivity {
 

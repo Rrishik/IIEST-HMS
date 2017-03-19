@@ -1,4 +1,4 @@
-package com.risk.iiest_hms.Fragments;
+package com.risk.IIEST_HMS.Fragments;
 
 
 import android.app.Fragment;
@@ -18,10 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.risk.iiest_hms.Adapter.HistoryAdapter;
-import com.risk.iiest_hms.Helper.AsyncTasks;
-import com.risk.iiest_hms.Helper.PageParser;
-import com.risk.iiest_hms.R;
+import com.risk.IIEST_HMS.Adapter.HistoryAdapter;
+import com.risk.IIEST_HMS.Helper.AsyncTasks;
+import com.risk.IIEST_HMS.Helper.PageParser;
+import com.risk.IIEST_HMS.R;
 
 import static android.content.Intent.ACTION_VIEW;
 

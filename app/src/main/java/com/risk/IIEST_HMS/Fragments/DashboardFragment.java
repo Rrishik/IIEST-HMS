@@ -1,4 +1,4 @@
-package com.risk.iiest_hms.Fragments;
+package com.risk.IIEST_HMS.Fragments;
 
 
 import android.app.Fragment;
@@ -12,9 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.risk.iiest_hms.Helper.Constants;
-import com.risk.iiest_hms.Helper.PageParser;
-import com.risk.iiest_hms.R;
+import com.risk.IIEST_HMS.Helper.Constants;
+import com.risk.IIEST_HMS.Helper.PageParser;
+import com.risk.IIEST_HMS.R;
 
 public class DashboardFragment extends Fragment {
 

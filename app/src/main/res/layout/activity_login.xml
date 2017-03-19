@@ -6,7 +6,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context="com.risk.iiest_hms.LoginActivity">
+    tools:context="com.risk.IIEST_HMS.LoginActivity">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"

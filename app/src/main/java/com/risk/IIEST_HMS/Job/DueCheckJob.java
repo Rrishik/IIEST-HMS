@@ -1,4 +1,4 @@
-package com.risk.iiest_hms.Job;
+package com.risk.IIEST_HMS.Job;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,11 +10,11 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
-import com.risk.iiest_hms.Helper.AsyncTasks;
-import com.risk.iiest_hms.Helper.Constants;
-import com.risk.iiest_hms.Helper.PageParser;
-import com.risk.iiest_hms.HomeActivity;
-import com.risk.iiest_hms.R;
+import com.risk.IIEST_HMS.Helper.AsyncTasks;
+import com.risk.IIEST_HMS.Helper.Constants;
+import com.risk.IIEST_HMS.Helper.PageParser;
+import com.risk.IIEST_HMS.HomeActivity;
+import com.risk.IIEST_HMS.R;
 
 public class DueCheckJob extends JobService {
 

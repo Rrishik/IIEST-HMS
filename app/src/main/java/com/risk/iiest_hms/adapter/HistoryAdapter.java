@@ -1,4 +1,4 @@
-package com.risk.iiest_hms.Adapter;
+package com.risk.IIEST_HMS.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.risk.iiest_hms.R;
+import com.risk.IIEST_HMS.R;
 
 import java.util.ArrayList;
 import java.util.List;
